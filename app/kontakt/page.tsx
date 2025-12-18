@@ -6,38 +6,31 @@ import { SiteShell } from "../components/SiteShell";
 import { Page, Card } from "../components/ui";
 import { SITE } from "../lib/site";
 
-const [form, setForm] = useState<{
+type Status = "idle" | "sent";
+
+const INQUIRY_TYPES: { value: string; label: string }[] = [
+  { value: "medlemskap", label: "Medlemskap (forespørsel)" },
+  { value: "komite", label: "Komité / utvalg" },
+  { value: "annet", label: "Annet (veiledende)" },
+];
+
+const UNITS: { value: string; label: string }[] = [
+  { value: "styret", label: "Styret" },
+  { value: "medlemskapsutvalget", label: "Medlemskapsutvalget" },
+  { value: "tempo-utvalg", label: "Tempo- og moderasjonsutvalget" },
+  { value: "kart-komite", label: "Kart- og strekkomiteen" },
+  { value: "annet", label: "Annet (foreløpig)" },
+];
+
+type KontaktForm = {
   name: string;
   email: string;
   type: string;
   unit: string;
   message: string;
   consent: boolean;
-  company: string;
-}>({
-  name: "",
-  email: "",
-  type: INQUIRY_TYPES[0].value,
-  unit: UNITS[0].value,
-  message: "",
-  consent: false,
-  company: "",
-});
-
-
-const INQUIRY_TYPES = [
-  { value: "medlemskap", label: "Medlemskap (forespørsel)" },
-  { value: "komite", label: "Komité / utvalg" },
-  { value: "annet", label: "Annet (veiledende)" },
-] as const;
-
-const UNITS = [
-  { value: "styret", label: "Styret" },
-  { value: "medlemskapsutvalget", label: "Medlemskapsutvalget" },
-  { value: "tempo-utvalg", label: "Tempo- og moderasjonsutvalget" },
-  { value: "kart-komite", label: "Kart- og strekkomiteen" },
-  { value: "annet", label: "Annet (foreløpig)" },
-] as const;
+  company: string; // honeypot
+};
 
 function makeRef() {
   const d = new Date();
@@ -54,28 +47,25 @@ export default function KontaktPage() {
   const [localError, setLocalError] = useState<string | null>(null);
 
   const [form, setForm] = useState<KontaktForm>({
-  name: "",
-  email: "",
-  type: INQUIRY_TYPES[0].value,
-  unit: UNITS[0].value,
-  message: "",
-  consent: false,
-  company: "",
-});
-
+    name: "",
+    email: "",
+    type: INQUIRY_TYPES[0].value,
+    unit: UNITS[0].value,
+    message: "",
+    consent: false,
+    company: "",
+  });
 
   useEffect(() => {
     setRef(makeRef()); // hydration-safe
   }, []);
 
-  // Validering for Variant A (lokalt)
-  function validate() {
+  function validate(current: KontaktForm) {
     const missing: string[] = [];
-    if (form.name.trim().length < 2) missing.push("navn");
-    if (form.email.trim().length < 5) missing.push("e-post");
-    if (form.message.trim().length < 10) missing.push("melding");
-    if (!form.consent) missing.push("samtykke");
-
+    if (current.name.trim().length < 2) missing.push("navn");
+    if (current.email.trim().length < 5) missing.push("e-post");
+    if (current.message.trim().length < 10) missing.push("melding");
+    if (!current.consent) missing.push("samtykke");
     return missing;
   }
 
@@ -89,7 +79,7 @@ export default function KontaktPage() {
       return;
     }
 
-    const missing = validate();
+    const missing = validate(form);
     if (missing.length > 0) {
       setLocalError(
         `Mangelfull henvendelse (foreløpig). Mangler: ${missing.join(", ")}.`,
@@ -195,6 +185,7 @@ export default function KontaktPage() {
                         }
                       />
                     </div>
+
                     <div className="space-y-1">
                       <label className="text-xs font-medium text-neutral-700">
                         E-post
@@ -219,7 +210,7 @@ export default function KontaktPage() {
                         className={selectBase}
                         value={form.type}
                         onChange={(e) =>
-                          setForm((f) => ({ ...f, unit: e.target.value as UnitType }))
+                          setForm((f) => ({ ...f, type: e.target.value }))
                         }
                       >
                         {INQUIRY_TYPES.map((t) => (
@@ -238,7 +229,7 @@ export default function KontaktPage() {
                         className={selectBase}
                         value={form.unit}
                         onChange={(e) =>
-                         setForm((f) => ({ ...f, unit: e.target.value as UnitType }))
+                          setForm((f) => ({ ...f, unit: e.target.value }))
                         }
                       >
                         {UNITS.map((u) => (
@@ -259,7 +250,7 @@ export default function KontaktPage() {
                       placeholder="Beskriv henvendelsen i moderat detaljnivå."
                       value={form.message}
                       onChange={(e) =>
-                       setForm((f) => ({ ...f, type: e.target.value as InquiryType }))
+                        setForm((f) => ({ ...f, message: e.target.value }))
                       }
                     />
                     <p className="text-xs text-neutral-500">
@@ -315,7 +306,7 @@ export default function KontaktPage() {
           <Card title="Supplerende materiale" meta="Til orientering">
             <div className="space-y-2 text-sm">
               <p className="text-neutral-700">
-                Gjeldene dokumenter kan konsulteres ved behov.
+                Gjeldende dokumenter kan konsulteres ved behov.
               </p>
               <Link
                 href="/supplerende-materiale"

@@ -6,19 +6,24 @@ import { SiteShell } from "../components/SiteShell";
 import { Page, Card } from "../components/ui";
 import { SITE } from "../lib/site";
 
-type Status = "idle" | "sent";
-type InquiryType = (typeof INQUIRY_TYPES)[number]["value"];
-type UnitType = (typeof UNITS)[number]["value"];
-
-type KontaktForm = {
+const [form, setForm] = useState<{
   name: string;
   email: string;
-  type: InquiryType;
-  unit: UnitType;
+  type: string;
+  unit: string;
   message: string;
   consent: boolean;
   company: string;
-};
+}>({
+  name: "",
+  email: "",
+  type: INQUIRY_TYPES[0].value,
+  unit: UNITS[0].value,
+  message: "",
+  consent: false,
+  company: "",
+});
+
 
 const INQUIRY_TYPES = [
   { value: "medlemskap", label: "Medlemskap (forespørsel)" },

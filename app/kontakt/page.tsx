@@ -7,6 +7,18 @@ import { Page, Card } from "../components/ui";
 import { SITE } from "../lib/site";
 
 type Status = "idle" | "sent";
+type InquiryType = (typeof INQUIRY_TYPES)[number]["value"];
+type UnitType = (typeof UNITS)[number]["value"];
+
+type KontaktForm = {
+  name: string;
+  email: string;
+  type: InquiryType;
+  unit: UnitType;
+  message: string;
+  consent: boolean;
+  company: string;
+};
 
 const INQUIRY_TYPES = [
   { value: "medlemskap", label: "Medlemskap (forespørsel)" },
@@ -36,15 +48,16 @@ export default function KontaktPage() {
   const [ref, setRef] = useState<string>("—");
   const [localError, setLocalError] = useState<string | null>(null);
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    type: INQUIRY_TYPES[0].value,
-    unit: UNITS[0].value,
-    message: "",
-    consent: false,
-    company: "", // honeypot
-  });
+  const [form, setForm] = useState<KontaktForm>({
+  name: "",
+  email: "",
+  type: INQUIRY_TYPES[0].value,
+  unit: UNITS[0].value,
+  message: "",
+  consent: false,
+  company: "",
+});
+
 
   useEffect(() => {
     setRef(makeRef()); // hydration-safe
@@ -201,7 +214,7 @@ export default function KontaktPage() {
                         className={selectBase}
                         value={form.type}
                         onChange={(e) =>
-                          setForm((f) => ({ ...f, type: e.target.value }))
+                          setForm((f) => ({ ...f, unit: e.target.value as UnitType }))
                         }
                       >
                         {INQUIRY_TYPES.map((t) => (
@@ -220,7 +233,7 @@ export default function KontaktPage() {
                         className={selectBase}
                         value={form.unit}
                         onChange={(e) =>
-                          setForm((f) => ({ ...f, unit: e.target.value }))
+                         setForm((f) => ({ ...f, unit: e.target.value as UnitType }))
                         }
                       >
                         {UNITS.map((u) => (
@@ -241,7 +254,7 @@ export default function KontaktPage() {
                       placeholder="Beskriv henvendelsen i moderat detaljnivå."
                       value={form.message}
                       onChange={(e) =>
-                        setForm((f) => ({ ...f, message: e.target.value }))
+                       setForm((f) => ({ ...f, type: e.target.value as InquiryType }))
                       }
                     />
                     <p className="text-xs text-neutral-500">

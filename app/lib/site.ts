@@ -1,5 +1,5 @@
 export const SITE = {
-  domain: "turforventninger.no",
+  domain: "turforventning.no",
   displayName: "Foreningen for Forventningen om Rolige Turer i Moderat Tempo",
   officialName:
     "Foreningen for Forventningen om Rolige Turer i Moderat Tempo i utmark, våtmark og urbane bymiljøer",

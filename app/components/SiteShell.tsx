@@ -122,6 +122,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <span className="text-white/25">·</span>
       <span>
         Turforventning.no er foreningens primære informasjonsflate.
+Forventet korrespondanse skjer via turforventinger.no.
       </span>
     </div>
   </div>

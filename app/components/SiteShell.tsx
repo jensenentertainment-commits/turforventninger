@@ -36,7 +36,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-          <Link href="/" className="group flex items-center gap-3">
+          <Link href="/" className="group flex min-w-0 items-center gap-3">
+
+
             <Image
               src="/logo/logo-emblem.png"
               alt="Foreningen for Forventningen om Rolige Turer i Moderat Tempo"
